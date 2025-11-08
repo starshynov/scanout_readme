@@ -1,4 +1,4 @@
-# 🛰️ ScanOut
+# ScanOut
 
 ### Current Doc Version
 v0.9 (MVP Stage)
