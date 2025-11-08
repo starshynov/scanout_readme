@@ -11,36 +11,39 @@ v0.9 (MVP Stage)
 **ScanOut**
 
 ### Brief description
-ScanOut — модульная система хранения, визуализации и анализа гео- и контент-данных.  
-Система объединяет мобильный и веб-клиент с разными уровнями доступа.
+ScanOut is a modular system for storing, visualizing, and analyzing geo and content data.  
+The system combines a mobile and web client with different levels of access.
 
 ### Project goal
-Создать универсальную платформу для сбора, визуализации и обмена данными, вчастности гео-данными, которая будет масштабироваться от MVP до коммерческой версии с микросервисной архитектурой.
+1) To create a universal platform for collecting, visualizing, and sharing data—particularly geo-data—that can scale from an MVP to a commercial version with a microservice architecture.  
+2) Companies performing technical or construction work often face falsified photo reports, incorrect coordinates, and a lack of reliable proof of *who* actually completed a task *and where*. Traditional GPS trackers and CRMs cannot verify data authenticity.  
+This system enables verification of location and work authenticity.
 
 ### Product history
-Данная версия является MVP и разрабатывалась как демонстрационный инструмент визуализации координат на карте (Leaflet + PostGIS). В отличии от легаси продукта компании, цель данного MVP было показать простоту архитектуры и выбора TypeScript как базового языка, способного с минимальными правками дать веб- мобильный и, даже если в будущем нужно, десктоп-клиенты. 
-В дальнейших, уже коммерческих версиях, был расширен до комплексной системы с модулями: Auth, Geo, Reader, Notifications и другими.
+This version is an MVP developed as a demo tool for coordinate visualization on a map (Leaflet + PostGIS).  
+Unlike the company’s legacy product, the purpose of this MVP was to demonstrate architectural simplicity and the choice of TypeScript as the base language, capable—with minimal adjustments—of supporting web, mobile, and, if needed, desktop clients.  
+Subsequent commercial versions were expanded into a full system with modules such as: Auth, Geo, Reader, Notifications, and others.
 
 ---
 
 ## 2. Overall Architecture
 
 ### Architectural approach
-MVP использует **модульную архитектуру**, реализованную в рамках одного репозитория (monorepo).  
-Планируется переход к **Event-Driven Microservices Architecture** в первом полном релизе.
+The MVP uses a **modular architecture** implemented within a single monorepo.  
+The first full release is planned to transition to an **Event-Driven Microservices Architecture**.
 
 ### Core principles
-- Объектно-ориентированная структура (OOP-подход вместо функциональной архитектуры)  
-- Независимость модулей (каждый отвечает за собственную доменную область)  
-- Возможность асинхронного обмена событиями (через Kafka)  
-- Поддержка масштабирования под микросервисы без изменения API
+- Object-Oriented structure (OOP approach instead of functional architecture)  
+- Module independence (each responsible for its own domain)  
+- Asynchronous event communication (via Kafka)  
+- Scalability to microservices without breaking the API
 
 ### Modules (current MVP)
-- **AuthModule** — авторизация и шифрование пользователей  
-- **GeoModule** — обработка координат и гео-данных (PostGIS)  
-- **ReaderModule** — визуализация текстов и фрагментов  
-- **NotificationModule** — система уведомлений  
-- **AdminModule** — интерфейс управления данными и пользователями
+- **AuthModule** — user authentication and encryption  
+- **GeoModule** — coordinate and geodata processing (PostGIS)  
+- **ReaderModule** — visualization of text and media fragments  
+- **NotificationModule** — notification system  
+- **AdminModule** — management interface for data and users
 
 ---
 
@@ -49,19 +52,19 @@ MVP использует **модульную архитектуру**, реал
 ### Frontend
 - Angular  
 - Angular Material  
-- Zustand (состояние клиента)  
-- Leaflet (карты)
+- Zustand (client state management)  
+- Leaflet (maps)
 
 ### Backend
 - Bun (REST API, WebSocket)  
-- Node-совместимый OOP-код, модули разделены по зонам ответственности
+- Node-compatible OOP-style modular code
 
 ### Messaging
-- Kafka + Schema Registry (в планах для микросервисной версии)
+- Kafka + Schema Registry (planned for microservice version)
 
 ### Databases
-- PostgreSQL (авторизация, системные данные)  
-- MongoDB (контент и документы)
+- PostgreSQL (authorization, system data)  
+- MongoDB (content and documents)
 
 ### Deployment
 - Docker Compose  
@@ -70,103 +73,103 @@ MVP использует **модульную архитектуру**, реал
 
 ### Monitoring
 - Google Cloud Logging  
-- Prometheus + Grafana (в планах)
+- Prometheus + Grafana (planned)
 
 ---
 
 ## 4. Users and Roles
 
-| Роль        | Описание доступа |
-|--------------|------------------|
-| **Admin**    | Полный доступ к данным, настройкам и пользователям |
-| **Manager**  | Доступ к веб-клиенту, аналитике и отчетам |
-| **Engineer** | Использует мобильный клиент, доступ только к своим данным |
+| Role         | Access Description |
+|---------------|--------------------|
+| **Admin**     | Full access to data, configurations, and user management |
+| **Manager**   | Access to web client, analytics, and reports |
+| **Engineer**  | Uses mobile client, access only to own data |
 
 ### Authentication & Authorization
-- Веб-клиент использует стандартную аутентификацию с паролем (`bcrypt`)  
-- Мобильный клиент для инженеров использует **шифрование имени пользователя внутри изображения** (стеганографическое шифрование, **Steganographic Authentication**).  
-- Проверка идентичности выполняется путём извлечения закодированного имени и сверки с сервером.  
-- Токен-авторизация (JWT + Refresh Tokens) реализуется на следующем этапе.
+- The web client uses standard password authentication (`bcrypt`).  
+- The mobile client for engineers uses **username encryption embedded in an image** (steganographic encryption, **Steganographic Authentication**).  
+- Identity verification occurs by extracting the encoded name and checking it with the server.  
+- Token-based authentication (JWT + Refresh Tokens) will be implemented in the next stage.
 
 ---
 
 ## 5. Microservice / Module Descriptions
 
 ### AuthModule
-- Авторизация и уникальное стеганографическое шифрование для мобильных клиентов  
-- Bcrypt-хэширование паролей для веб-версии  
+- Handles authentication and unique steganographic encryption for mobile clients  
+- Bcrypt password hashing for the web version  
 
 ### GeoModule
-- Получение и запись координат пользователей  
-- Интеграция с PostGIS  
-- Отображение маршрутов и точек на карте через Leaflet
+- Receives and records user coordinates  
+- Integrated with PostGIS  
+- Displays user routes and points on the map via Leaflet
 
 ### ReaderModule
-- Отображение текстовых и мультимедийных материалов  
-- Поиск, индексация и связь между фрагментами контента
+- Displays text and multimedia materials  
+- Search, indexing, and linking between content fragments
 
 ### NotificationModule
-- Отправка и получение уведомлений  
-- Поддержка WebSocket-сообщений и email-триггеров
+- Sends and receives notifications  
+- Supports WebSocket messages and email triggers
 
 ### AdminModule
-- Панель управления ролями, пользователями и данными  
-- Настройка параметров системы
+- Control panel for roles, users, and data  
+- System parameter configuration
 
 ---
 
 ## 6. * Integration and Communication
 
 ### Data exchange mechanisms
-- В MVP обмен между модулями идёт через REST-эндпоинты  
-- Планируется добавление **Kafka topics** для асинхронной интеграции
+- In the MVP, communication between modules occurs via REST endpoints  
+- **Kafka topics** will be introduced later for asynchronous integration
 
 ### Versioning
 - REST API: `/api/v1/...`  
-- Будущее: `/api/v2` + versioned Kafka topics (`user.events.v2`)  
-- Schema Registry для валидации событий  
+- Future: `/api/v2` + versioned Kafka topics (`user.events.v2`)  
+- Schema Registry for event validation  
 
 ### Scheduled tasks
-- Cron-процессы для периодического анализа данных и обновлений
+- Cron processes for periodic data analysis and updates
 
 ---
 
 ## 7. Data and Storage
 
 ### General data model
-- PostgreSQL → пользователи, роли, авторизация  
-- MongoDB → контент, фрагменты, события  
-- PostGIS → координаты, геометрические объекты
+- PostgreSQL → users, roles, authentication  
+- MongoDB → content, fragments, events  
+- PostGIS → coordinates, geometric objects
 
 ### Media and Files
-- Изображения и медиафайлы хранятся в **Google Cloud Storage**  
-- Каждый модуль имеет собственный bucket  
-- Кэширование — в памяти (per-service cache) и LocalStorage на фронтенде  
+- Images and media files stored in **Google Cloud Storage**  
+- Each module has its own bucket  
+- Caching — in-memory (per service) and LocalStorage on the frontend  
 
 ### Session and Progress
-- Прогресс пользователя сохраняется в MongoDB  
-- Сессии валидируются JWT-токенами  
+- User progress stored in MongoDB  
+- Sessions validated via JWT tokens  
 
 ---
 
 ## 8. Security and PII
 
 ### Authentication Methods
-- Веб: bcrypt-пароли  
-- Мобильный клиент: **стеганографическое шифрование имени пользователя** (Steganographic Authentication)  
+- Web: bcrypt passwords  
+- Mobile client: **steganographic username encryption** (Steganographic Authentication)  
 
 ### PII Isolation (Best Practices)
-- Персональные данные изолируются в отдельной базе (в коммерческой версии)  
-- Доступ — только через PII-gateway  
-- Логи доступа → Kafka topic `pii.access.log`  
-- Соответствие **GDPR (Европейское законодательство)**  
+- Personal data stored in a separate database (in commercial versions)  
+- Access only via PII-gateway  
+- Access logs → Kafka topic `pii.access.log`  
+- Full **GDPR compliance (EU regulations)**  
 
 ### Google Cloud Security Practices
-- Секреты и ключи — в **Google Secret Manager**  
-- Шифрование данных на уровне **AES-256-GCM (Cloud KMS)**  
-- HTTPS-сертификаты через **Google Managed SSL**  
-- Identity and Access Management (IAM) для разграничения прав  
-- Audit Logs включены для всех GCP-сервисов  
+- Secrets and keys — **Google Secret Manager**  
+- Data encryption — **AES-256-GCM via Cloud KMS**  
+- HTTPS certificates — **Google Managed SSL**  
+- Identity and Access Management (IAM) for permissions separation  
+- Audit Logs enabled for all GCP services  
 
 ---
 
@@ -174,49 +177,49 @@ MVP использует **модульную архитектуру**, реал
 
 ### Application logs
 - Google Cloud Logging  
-- Консоль и централизованные логи Bun-серверов  
+- Console and centralized Bun server logs  
 
 ### Event logs
-- Kafka (в будущих версиях)  
-- Архивация в Google Cloud Storage  
+- Kafka (future implementation)  
+- Archived in Google Cloud Storage  
 
 ### System logs
-- Docker-контейнеры с выводом в Cloud Logging  
-- Мониторинг метрик через Prometheus + Grafana  
+- Docker container output integrated with Cloud Logging  
+- Metrics monitored via Prometheus + Grafana  
 
 ### Retention
-- 30 дней для dev  
-- 180 дней для prod  
-- Архивирование старых логов в GCS  
+- 30 days for dev  
+- 180 days for prod  
+- Old logs archived to GCS  
 
 ---
 
 ## 10. DevOps and CI/CD
 
 ### Infrastructure
-- Контейнеризация через Docker  
+- Containerization via Docker  
 - CI/CD — **Google Cloud Build + GitHub Actions**  
-- Хранение образов — **Artifact Registry (GCP)**  
+- Image storage — **Artifact Registry (GCP)**  
 
 ### Environments
-- `local` — разработка  
+- `local` — development  
 - `production` — GCP Cloud Run  
-- Планируются `dev` и `staging` окружения  
+- `dev` and `staging` environments planned  
 
 ### Best Practices (GCP)
-- Infrastructure-as-Code (Terraform или Pulumi)  
+- Infrastructure-as-Code (Terraform or Pulumi)  
 - Secrets → Google Secret Manager  
-- Сборка → Cloud Build triggers on push  
-- Деплой → Cloud Run service revisions  
-- Мониторинг → Cloud Console + Grafana dashboards  
+- Build → Cloud Build triggers on push  
+- Deploy → Cloud Run service revisions  
+- Monitoring → Cloud Console + Grafana dashboards  
 
 ---
 
 ## 11. Testing and Quality
 
 ### Current
-- Unit-тесты на **Jest** (для бизнес-логики и API)  
-- Проверка корректности данных и координат  
+- Unit tests using **Jest** (for business logic and API)  
+- Data and coordinate validation  
 
 ### Planned
 - Integration tests (Testcontainers, Supertest)  
@@ -225,9 +228,9 @@ MVP использует **модульную архитектуру**, реал
 
 ### Best Practices (GCP)
 - CI pipeline: GitHub Actions → Cloud Build  
-- Изолированные тест-контейнеры  
-- Хранение отчётов в **Cloud Storage**  
-- Автоматический запуск при каждом merge  
+- Isolated test containers  
+- Reports stored in **Cloud Storage**  
+- Automatic execution on each merge  
 
 ---
 
@@ -235,26 +238,25 @@ MVP использует **модульную архитектуру**, реал
 
 ### Metrics
 - Latency, Throughput, API Errors, Consumer Lag  
-- В будущем — интеграция Prometheus → Grafana  
+- Future integration: Prometheus → Grafana  
 
 ### Alerts
 - Grafana Alerts → Email / Slack  
-- Автоматический перезапуск контейнера при сбое (Cloud Run restart policy)  
+- Automatic container restart on failure (Cloud Run restart policy)  
 
 ### Response
-- Rollback через Cloud Build revisions  
-- Уведомления в Slack канале DevOps  
+- Rollback via Cloud Build revisions  
+- DevOps Slack notifications  
 
 ---
 
 ## 13. Roadmap and Future Development
 
-1. Переход от модульной к микросервисной архитектуре  
-2. Добавление полноценного PII-сервиса  
-3. Интеграция Kafka и событийной модели  
-4. WebSocket-реакции и уведомления  
-5. Расширенная аналитика и AI-интерпретация данных  
-6. Offline-режим для мобильного клиента  
-7. Система обучения моделей и рекомендаций  
-8. Введение среды `staging` и auto-scaling через Cloud Run
-
+1. Transition from modular to microservice architecture  
+2. Add a dedicated PII service  
+3. Integrate Kafka and event-driven model  
+4. WebSocket-based reactions and notifications  
+5. Extended analytics and AI-powered data interpretation  
+6. Offline mode for mobile client  
+7. Machine learning and recommendation features  
+8. Introduce `staging` environment and auto-scaling via Cloud Run
