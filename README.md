@@ -168,6 +168,8 @@ User schema (PostgreSQL)
 
 Order schema (PostgreSQL)
 
+| Field | Type | Description |
+|-----------|-----------|-----------|
 | id   | UUID   | Primary key   |
 | user_id   | UUID   | Foreign key → users table   |
 | product_id   | ObjectId   | Foreign key → MongoDB products   |
@@ -177,6 +179,8 @@ Order schema (PostgreSQL)
 
 Vector schema (Qdrant)
 
+| Field | Type | Description |
+|-----------|-----------|-----------|
 | id   | UUID   | Linked to product ID   |
 | vector   | Float[]   | 512-dimensional embedding vector   |
 | metadata   | JSON   | Color palette, mood, and art style tags   |
